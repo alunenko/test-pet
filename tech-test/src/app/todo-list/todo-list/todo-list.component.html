@@ -1,1 +1,28 @@
-<p>todo-list works!</p>
+<div>
+  <button (click)="addItem()">add</button>
+  <ul class="list">
+    <li *ngFor="let todoItem of todoItems">
+      <div class="list__item">
+        <input (change)="toggleDone($event, todoItem)"
+               [ngClass]="{'m-hide': editMode === todoItem.id}"
+               type="checkbox">
+        <div class="view">
+          <span>{{todoItem.value}}</span>
+          <button [disabled]="todoItem.isDone"
+                  (click)="editItem($event, todoItem)">edit</button>
+          <button [disabled]="todoItem.isDone"
+                  (click)="removeItem(todoItem)">remove</button>
+        </div>
+        <div class="edit"
+             [ngClass]="{'m-on': editMode === todoItem.id}">
+          <label for="item-value">Edit id {{todoItem.id}}: </label>
+          <input [(ngModel)]="todoItem.value"
+                 id="item-value"
+                 placeholder="value">
+          <button (click)="saveItem()">save</button>
+          <button (click)="cancelEdit(todoItem)">cancel</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,17 @@
+.list {
+  .view {
+    display: block;
+
+    &.m-edit { display: none; }
+  }
+  .edit {
+    display: none;
+
+    &.m-on { display: block; }
+  }
+  .done { text-decoration: line-through; }
+
+  &__item { display: flex; }
+
+  .m-hide { display: none; }
+}
