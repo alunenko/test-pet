@@ -22,7 +22,14 @@ export class TodoListService {
   }
 
   filterItems(search: string, itemsList: ITodoItem[]): ITodoItem[] {
-    const a = itemsList.filter((item) => item.value.includes(search));
+    let a: ITodoItem[];
+
+    if (search === undefined || search === '') {
+      a = itemsList;
+    } else {
+      a = itemsList.filter((item) => item.value.includes(search));
+    }
+
     console.log('a ', a);
     return a;
   }

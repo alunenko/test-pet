@@ -44,7 +44,6 @@ export class TodoListComponent implements OnInit {
     this.editMode = item.id;
     this.todoItemPrev = item.value;
     this.editedItem = item;
-    this.beforeSearchTodoItems = this.todoItems;
   }
 
   addItem(): void {
@@ -58,6 +57,7 @@ export class TodoListComponent implements OnInit {
   saveItem(): void {
     this.editedElement.classList.remove('edit');
     this.editMode = -1;
+    this.filterList();
   }
 
   cancelEdit(item: ITodoItem): void {
@@ -75,14 +75,12 @@ export class TodoListComponent implements OnInit {
   filterList(): void {
     console.log('this.searchValue ', typeof this.searchValue);
     console.log('this.searchValue ', JSON.stringify(this.searchValue));
-    if (this.searchValue === '') {
-      this.todoItems = this.beforeSearchTodoItems;
-    }
     this.todoListService.someEvent.next(this.todoListService.filterItems(this.searchValue, this.todoItems));
   }
 
   cancelSearch(): void {
     this.searchValue = '';
+    this.todoItems = this.beforeSearchTodoItems;
     this.filterList();
   }
 }

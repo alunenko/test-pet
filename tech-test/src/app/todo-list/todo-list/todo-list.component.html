@@ -4,7 +4,8 @@
          (input)="filterList()"
          type="text">
   <button (click)="cancelSearch()">cancel</button>
-  <ul class="list">
+  <ul *ngIf="todoItems.length"
+      class="list">
     <li *ngFor="let todoItem of todoItems">
       <div class="list__item">
         <input (change)="toggleDone($event, todoItem)"
@@ -29,4 +30,5 @@
       </div>
     </li>
   </ul>
+  <p *ngIf="!todoItems.length">No items</p>
 </div>
