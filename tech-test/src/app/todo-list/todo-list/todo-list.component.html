@@ -4,12 +4,24 @@
          (input)="filterList()"
          type="text">
   <button (click)="cancelSearch()">cancel</button>
+  <div style="display: inline-block">
+    <label for="filter-done">
+      <input [(ngModel)]="isDone"
+             (change)="filterDone()"
+             type="checkbox"
+             name="filter-done"
+             id="filter-done">
+      Hide complete items
+    </label>
+  </div>
   <ul *ngIf="todoItems.length"
       class="list">
     <li *ngFor="let todoItem of todoItems">
-      <div class="list__item">
+      <div [ngClass]="{'done': todoItem.isDone}"
+           class="list__item">
         <input (change)="toggleDone($event, todoItem)"
                [ngClass]="{'m-hide': editMode === todoItem.id}"
+               [checked]="todoItem.isDone"
                type="checkbox">
         <div class="view">
           <span>{{todoItem.value}}</span>

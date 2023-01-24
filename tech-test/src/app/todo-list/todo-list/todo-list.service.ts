@@ -30,7 +30,11 @@ export class TodoListService {
       a = itemsList.filter((item) => item.value.includes(search));
     }
 
-    console.log('a ', a);
+    console.log('filterItems a ', a);
     return a;
+  }
+
+  filterDone(isDone: boolean, itemsList: ITodoItem[]): ITodoItem[] {
+    return itemsList.filter((item) => item.isDone !== isDone);
   }
 }

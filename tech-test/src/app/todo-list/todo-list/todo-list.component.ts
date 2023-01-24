@@ -15,6 +15,7 @@ export class TodoListComponent implements OnInit {
   editedElement: any;
   editedItem?: ITodoItem;
   searchValue: string;
+  isDone: boolean = false;
 
   constructor(
     private todoListService: TodoListService
@@ -81,6 +82,15 @@ export class TodoListComponent implements OnInit {
   cancelSearch(): void {
     this.searchValue = '';
     this.todoItems = this.beforeSearchTodoItems;
+    this.filterList();
+  }
+
+  filterDone(): void {
+    if (this.isDone) {
+      this.todoListService.someEvent.next(this.todoListService.filterDone(this.isDone, this.todoItems));
+    } else {
+      this.todoItems = this.beforeSearchTodoItems;
+    }
     this.filterList();
   }
 }
