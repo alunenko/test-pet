@@ -1,5 +1,9 @@
 <div>
   <button (click)="addItem()">add</button>
+  <input [(ngModel)]="searchValue"
+         (input)="filterList()"
+         type="text">
+  <button (click)="cancelSearch()">cancel</button>
   <ul class="list">
     <li *ngFor="let todoItem of todoItems">
       <div class="list__item">

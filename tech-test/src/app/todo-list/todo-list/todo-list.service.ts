@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {ITodoItem} from './todo-list';
-import {BehaviorSubject} from 'rxjs';
+import {Subject} from 'rxjs';
 
 @Injectable()
 export class TodoListService {
-  someEvent = new BehaviorSubject(0);
+  someEvent: Subject<ITodoItem[]> = new Subject();
+
   constructor() {
   }
 
@@ -18,5 +19,11 @@ export class TodoListService {
       { id: +new Date() + 6, value: 'task#6', isDone: false },
       { id: +new Date() + 7, value: 'task#7', isDone: false },
     ];
+  }
+
+  filterItems(search: string, itemsList: ITodoItem[]): ITodoItem[] {
+    const a = itemsList.filter((item) => item.value.includes(search));
+    console.log('a ', a);
+    return a;
   }
 }

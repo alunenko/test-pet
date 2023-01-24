@@ -9,9 +9,12 @@ import {ITodoItem} from './todo-list';
 })
 export class TodoListComponent implements OnInit {
   todoItems: ITodoItem[];
+  beforeSearchTodoItems: ITodoItem[];
   todoItemPrev: string;
   editMode: number = 0;
   editedElement: any;
+  editedItem?: ITodoItem;
+  searchValue: string;
 
   constructor(
     private todoListService: TodoListService
@@ -19,7 +22,8 @@ export class TodoListComponent implements OnInit {
 
   ngOnInit(): void {
     this.todoItems = this.todoListService.getItems();
-    this.todoListService.someEvent.subscribe((selectedId) => this.editMode = selectedId);
+    this.beforeSearchTodoItems = this.todoItems;
+    this.todoListService.someEvent.subscribe((itemResults: ITodoItem[]) => this.todoItems = itemResults);
   }
 
   findItem(itemToFind: ITodoItem): number {
@@ -32,11 +36,15 @@ export class TodoListComponent implements OnInit {
   }
 
   editItem(event: any, item: ITodoItem): void {
+    if (this.editedItem && this.editMode !== -1) {
+      this.cancelEdit(this.editedItem);
+    }
     this.editedElement = event.target.parentNode;
     this.editedElement.classList.add('edit');
-    this.todoListService.someEvent.next(item.id);
+    this.editMode = item.id;
     this.todoItemPrev = item.value;
-    console.log(item);
+    this.editedItem = item;
+    this.beforeSearchTodoItems = this.todoItems;
   }
 
   addItem(): void {
@@ -62,5 +70,19 @@ export class TodoListComponent implements OnInit {
   toggleDone(event: any, item: ITodoItem): void {
     event.target.parentNode.classList.toggle('done');
     item.isDone = !item.isDone;
+  }
+
+  filterList(): void {
+    console.log('this.searchValue ', typeof this.searchValue);
+    console.log('this.searchValue ', JSON.stringify(this.searchValue));
+    if (this.searchValue === '') {
+      this.todoItems = this.beforeSearchTodoItems;
+    }
+    this.todoListService.someEvent.next(this.todoListService.filterItems(this.searchValue, this.todoItems));
+  }
+
+  cancelSearch(): void {
+    this.searchValue = '';
+    this.filterList();
   }
 }
