@@ -71,6 +71,7 @@ export class TodoListComponent implements OnInit {
   toggleDone(event: any, item: ITodoItem): void {
     event.target.parentNode.classList.toggle('done');
     item.isDone = !item.isDone;
+    this.filterDone();
   }
 
   filterList(): void {
@@ -83,6 +84,7 @@ export class TodoListComponent implements OnInit {
     this.searchValue = '';
     this.todoItems = this.beforeSearchTodoItems;
     this.filterList();
+    this.filterDone();
   }
 
   filterDone(): void {

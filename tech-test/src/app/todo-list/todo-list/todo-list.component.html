@@ -1,46 +1,64 @@
 <div>
-  <button (click)="addItem()">add</button>
-  <input [(ngModel)]="searchValue"
-         (input)="filterList()"
-         type="text">
-  <button (click)="cancelSearch()">cancel</button>
-  <div style="display: inline-block">
-    <label for="filter-done">
-      <input [(ngModel)]="isDone"
-             (change)="filterDone()"
-             type="checkbox"
-             name="filter-done"
-             id="filter-done">
-      Hide complete items
-    </label>
-  </div>
-  <ul *ngIf="todoItems.length"
-      class="list">
-    <li *ngFor="let todoItem of todoItems">
-      <div [ngClass]="{'done': todoItem.isDone}"
-           class="list__item">
-        <input (change)="toggleDone($event, todoItem)"
-               [ngClass]="{'m-hide': editMode === todoItem.id}"
-               [checked]="todoItem.isDone"
-               type="checkbox">
-        <div class="view">
-          <span>{{todoItem.value}}</span>
-          <button [disabled]="todoItem.isDone"
-                  (click)="editItem($event, todoItem)">edit</button>
-          <button [disabled]="todoItem.isDone"
-                  (click)="removeItem(todoItem)">remove</button>
-        </div>
-        <div class="edit"
-             [ngClass]="{'m-on': editMode === todoItem.id}">
-          <label for="item-value">Edit id {{todoItem.id}}: </label>
-          <input [(ngModel)]="todoItem.value"
-                 id="item-value"
-                 placeholder="value">
-          <button (click)="saveItem()">save</button>
-          <button (click)="cancelEdit(todoItem)">cancel</button>
-        </div>
-      </div>
-    </li>
-  </ul>
-  <p *ngIf="!todoItems.length">No items</p>
+<!--  <button (click)="addItem()"-->
+<!--          mat-flat-button-->
+<!--          color="primary">add</button>-->
+  <mat-card class="todo-card">
+    <mat-card-header>
+      <mat-card-title>TODO list</mat-card-title>
+<!--      <mat-card-subtitle>Start</mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-actions>
+      <mat-form-field>
+        <mat-label>For search type here</mat-label>
+        <input matInput
+               type="text"
+               [(ngModel)]="searchValue"
+               (input)="filterList()"
+               placeholder="For ex., task#1">
+        <button matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                *ngIf="searchValue"
+                (click)="cancelSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="isDone"
+                    (change)="filterDone()">Hide complete items</mat-checkbox>
+    </mat-card-actions>
+    <mat-card-content>
+      <ul *ngIf="todoItems.length"
+          class="list">
+        <li *ngFor="let todoItem of todoItems">
+          <div [ngClass]="{'done': todoItem.isDone}"
+               class="list__item">
+            <mat-checkbox (change)="toggleDone($event, todoItem)"
+                          *ngIf="editMode !== todoItem.id"
+                          [checked]="todoItem.isDone">{{todoItem.value}}</mat-checkbox>
+            <div class="view">
+              <button mat-stroked-button
+                      color="primary"
+                      [disabled]="todoItem.isDone"
+                      (click)="editItem($event, todoItem)">edit</button>
+              <button mat-stroked-button
+                      color="warn"
+                      [disabled]="todoItem.isDone"
+                      (click)="removeItem(todoItem)">remove</button>
+            </div>
+            <div class="edit"
+                 [ngClass]="{'m-on': editMode === todoItem.id}">
+              <label for="item-value">Edit id {{todoItem.id}}: </label>
+              <input [(ngModel)]="todoItem.value"
+                     id="item-value"
+                     placeholder="value">
+              <button (click)="saveItem()">save</button>
+              <button (click)="cancelEdit(todoItem)">cancel</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <p *ngIf="!todoItems.length"
+         class="no-items-message">No items</p>
+    </mat-card-content>
+  </mat-card>
 </div>
