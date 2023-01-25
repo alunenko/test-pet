@@ -1,5 +1,5 @@
 .todo-card {
-  max-width: 450px;
+  max-width: 500px;
 
   .mat-card-actions {
     display: flex;
@@ -19,11 +19,28 @@
 
     &.m-on { display: block; }
   }
-  .done { text-decoration: line-through; }
 
   &__item { display: flex; }
 
   .m-hide { display: none; }
 }
 
+.done { text-decoration: line-through; }
+
 .no-items-message { text-align: center; }
+
+.grid {
+  display: flex;
+  justify-content: space-between;
+  height: 70px;
+
+  .align-buttons {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    width: 160px;
+    justify-content: space-between;
+  }
+}
+
+.l-h-70 { line-height: 70px; }

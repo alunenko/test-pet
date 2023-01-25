@@ -30,12 +30,13 @@
       <ul *ngIf="todoItems.length"
           class="list">
         <li *ngFor="let todoItem of todoItems">
-          <div [ngClass]="{'done': todoItem.isDone}"
-               class="list__item">
-            <mat-checkbox (change)="toggleDone($event, todoItem)"
-                          *ngIf="editMode !== todoItem.id"
-                          [checked]="todoItem.isDone">{{todoItem.value}}</mat-checkbox>
-            <div class="view">
+          <div *ngIf="editMode !== todoItem.id"
+               class="grid">
+            <mat-checkbox (change)="toggleDone(todoItem)"
+                          [checked]="todoItem.isDone"
+                          [ngClass]="{'done': todoItem.isDone}"
+                          class="l-h-70">{{todoItem.value}}</mat-checkbox>
+            <div class="align-buttons">
               <button mat-stroked-button
                       color="primary"
                       [disabled]="todoItem.isDone"
@@ -45,14 +46,22 @@
                       [disabled]="todoItem.isDone"
                       (click)="removeItem(todoItem)">remove</button>
             </div>
-            <div class="edit"
-                 [ngClass]="{'m-on': editMode === todoItem.id}">
-              <label for="item-value">Edit id {{todoItem.id}}: </label>
-              <input [(ngModel)]="todoItem.value"
-                     id="item-value"
-                     placeholder="value">
-              <button (click)="saveItem()">save</button>
-              <button (click)="cancelEdit(todoItem)">cancel</button>
+          </div>
+          <div *ngIf="editMode === todoItem.id"
+               class="grid">
+            <mat-form-field>
+              <mat-label>Edit id {{todoItem.id}}:</mat-label>
+              <input matInput
+                     [(ngModel)]="todoItem.value"
+                     placeholder="Something else?">
+            </mat-form-field>
+            <div class="align-buttons">
+              <button mat-stroked-button
+                      color="primary"
+                      (click)="saveItem()">save</button>
+              <button mat-stroked-button
+                      color="warn"
+                      (click)="cancelEdit(todoItem)">cancel</button>
             </div>
           </div>
         </li>

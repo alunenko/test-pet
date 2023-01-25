@@ -68,8 +68,7 @@ export class TodoListComponent implements OnInit {
     this.editMode = -1;
   }
 
-  toggleDone(event: any, item: ITodoItem): void {
-    event.target.parentNode.classList.toggle('done');
+  toggleDone(item: ITodoItem): void {
     item.isDone = !item.isDone;
     this.filterDone();
   }

@@ -12,7 +12,7 @@ export class TodoListService {
   getItems(): ITodoItem[] {
     return [
       { id: +new Date() + 1, value: 'task#1', isDone: false },
-      { id: +new Date() + 2, value: 'task#2', isDone: false },
+      { id: +new Date() + 2, value: 'task#2', isDone: true  },
       { id: +new Date() + 3, value: 'task#3', isDone: false },
       { id: +new Date() + 4, value: 'task#4', isDone: false },
       { id: +new Date() + 5, value: 'task#5', isDone: false },
