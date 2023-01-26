@@ -31,7 +31,7 @@ export class TodoListComponent implements OnInit {
   }
 
   toggleListDone(): void { // TODO: done!
-    if(this.isDone && this.searchValue === '') {
+    if(this.isDone) {
       this.beforeSearchTodoItems = this.todoListService.todoItems$.value
     }
 
