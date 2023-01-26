@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core';
 import {ITodoItem} from './todo-list';
-import {Subject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class TodoListService {
-  someEvent: Subject<ITodoItem[]> = new Subject();
+  todoItems$: BehaviorSubject<ITodoItem[]> = new BehaviorSubject<ITodoItem[]>([]);
 
   constructor() {
+    this.getItems();
   }
 
-  getItems(): ITodoItem[] {
-    return [
+  getItems(): void {
+    this.todoItems$.next([
       { id: +new Date() + 1, value: 'task#1', isDone: false },
       { id: +new Date() + 2, value: 'task#2', isDone: true  },
       { id: +new Date() + 3, value: 'task#3', isDone: false },
@@ -18,23 +19,29 @@ export class TodoListService {
       { id: +new Date() + 5, value: 'task#5', isDone: false },
       { id: +new Date() + 6, value: 'task#6', isDone: false },
       { id: +new Date() + 7, value: 'task#7', isDone: false },
-    ];
+    ]);
   }
 
-  filterItems(search: string, itemsList: ITodoItem[]): ITodoItem[] {
-    let a: ITodoItem[];
-
-    if (search === undefined || search === '') {
-      a = itemsList;
-    } else {
-      a = itemsList.filter((item) => item.value.includes(search));
-    }
-
-    console.log('filterItems a ', a);
-    return a;
+  search(params: {search: string, prevList: ITodoItem[]}): void {
+    this.todoItems$.next(
+      params.prevList.filter((item: ITodoItem) => item.value.includes(params.search))
+    );
   }
 
-  filterDone(isDone: boolean, itemsList: ITodoItem[]): ITodoItem[] {
-    return itemsList.filter((item) => item.isDone !== isDone);
+  findItem(itemToFind: ITodoItem): number {
+    return this.todoItems$.value.findIndex((item: ITodoItem) => item.id === itemToFind.id);
+  }
+
+  removeItem(removeItem: ITodoItem): void {
+    this.todoItems$.value.splice(
+      this.findItem(removeItem),
+      1
+    );
+  }
+
+  toggleListDone(params: {isDone: boolean, prevList: ITodoItem[]}): void {
+    this.todoItems$.next(
+      params.isDone ? this.todoItems$.value.filter((item: ITodoItem) => item.isDone !== params.isDone) : params.prevList
+    );
   }
 }

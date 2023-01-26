@@ -8,90 +8,108 @@ import {ITodoItem} from './todo-list';
   styleUrls: ['./todo-list.component.scss']
 })
 export class TodoListComponent implements OnInit {
-  todoItems: ITodoItem[];
-  beforeSearchTodoItems: ITodoItem[];
-  todoItemPrev: string;
-  editMode: number = 0;
-  editedElement: any;
-  editedItem?: ITodoItem;
-  searchValue: string;
-  isDone: boolean = false;
-
   constructor(
     private todoListService: TodoListService
   ) { }
 
+  beforeSearchTodoItems: ITodoItem[];
+  todoItems: ITodoItem[];
+  valueBeforeEdit: string;
+  editMode = -1; // As array index. 0, 1, 2, etc: ON; -1: OFF
+  editedItem?: ITodoItem;
+  searchValue: string;
+  searchValuePrev: string;
+  isDone = false;
+
   ngOnInit(): void {
-    this.todoItems = this.todoListService.getItems();
-    this.beforeSearchTodoItems = this.todoItems;
-    this.todoListService.someEvent.subscribe((itemResults: ITodoItem[]) => this.todoItems = itemResults);
+    this.todoListService.todoItems$.subscribe((todoItems: ITodoItem[]) => {
+      this.todoItems = todoItems;
+      console.log('this.todoItems ', this.todoItems);
+    });
+
+    this.searchValuePrev = this.searchValue;
   }
 
-  findItem(itemToFind: ITodoItem): number {
-    return this.todoItems.findIndex((item) => item.id === itemToFind.id);
+  toggleListDone(): void { // TODO: done!
+    if(this.isDone && this.searchValue === '') {
+      this.beforeSearchTodoItems = this.todoListService.todoItems$.value
+    }
+
+    this.todoListService.toggleListDone({isDone: this.isDone, prevList: this.beforeSearchTodoItems});
   }
 
-  removeItem(removeItem: ITodoItem): void {
-    const removeItemIndex = this.findItem(removeItem);
-    this.todoItems.splice(removeItemIndex, 1);
+  search(): void { // TODO: done!
+    // case: from '' to 1
+    if (
+      (this.searchValuePrev === '' || this.searchValuePrev === undefined) &&
+      (this.searchValue !== '' || this.searchValue !== undefined)
+    ) {
+      this.beforeSearchTodoItems = this.todoListService.todoItems$.value;
+      this.todoListService.search({search: this.searchValue, prevList: this.beforeSearchTodoItems});
+      this.searchValuePrev = this.searchValue;
+    }
+
+    // case: from 1 to 12; from 12 to 123; from 123 to 12; from ayn to '';
+    if(
+      (this.searchValuePrev !== '' || this.searchValuePrev !== undefined) &&
+      (this.searchValue !== '' || this.searchValue !== undefined)
+    ) {
+      this.todoListService.search({search: this.searchValue, prevList: this.beforeSearchTodoItems});
+      this.searchValuePrev = this.searchValue;
+    }
+
+    // case: from ayn to '';
+    if(
+      (this.searchValuePrev !== '' || this.searchValuePrev !== undefined) &&
+      (this.searchValue === '' || this.searchValue === undefined)
+    ) {
+      this.todoListService.todoItems$.next(this.beforeSearchTodoItems);
+      this.searchValuePrev = this.searchValue;
+    }
   }
 
-  editItem(event: any, item: ITodoItem): void {
+  cancelSearch(): void { // TODO: done!
+    this.searchValue = '';
+    this.todoListService.todoItems$.next(this.beforeSearchTodoItems);
+  }
+
+  toggleItemDone(item: ITodoItem): void { // TODO: done!
+    const itemIndex = this.todoListService.findItem(item);
+    this.todoListService.todoItems$.value[itemIndex].isDone = !this.todoListService.todoItems$.value[itemIndex].isDone;
+  }
+
+  editItem(item: ITodoItem): void { // TODO: done!
+    // Close previous edit if it was active
     if (this.editedItem && this.editMode !== -1) {
       this.cancelEdit(this.editedItem);
     }
-    this.editedElement = event.target.parentNode;
-    this.editedElement.classList.add('edit');
+
+    // Current edit state
     this.editMode = item.id;
-    this.todoItemPrev = item.value;
+    this.valueBeforeEdit = item.value;
     this.editedItem = item;
   }
 
-  addItem(): void {
-    this.todoItems.push({
-      id: +new Date() + 1,
-      value: `task#new`,
-      isDone: false
-    });
-  }
+  cancelEdit(item: ITodoItem): void { // TODO: done!
+    const itemIndex = this.todoListService.findItem(item);
+    this.todoListService.todoItems$.value[itemIndex].value = this.valueBeforeEdit;
 
-  saveItem(): void {
-    this.editedElement.classList.remove('edit');
-    this.editMode = -1;
-    this.filterList();
-  }
-
-  cancelEdit(item: ITodoItem): void {
-    this.editedElement.classList.remove('edit');
-    const a = this.findItem(item);
-    this.todoItems[a].value = this.todoItemPrev;
     this.editMode = -1;
   }
 
-  toggleDone(item: ITodoItem): void {
-    item.isDone = !item.isDone;
-    this.filterDone();
+  saveItem(): void { // TODO: done!
+    this.editMode = -1;
   }
 
-  filterList(): void {
-    console.log('this.searchValue ', typeof this.searchValue);
-    console.log('this.searchValue ', JSON.stringify(this.searchValue));
-    this.todoListService.someEvent.next(this.todoListService.filterItems(this.searchValue, this.todoItems));
+  removeItem(item: ITodoItem): void {
+    this.todoListService.removeItem(item);
   }
 
-  cancelSearch(): void {
-    this.searchValue = '';
-    this.todoItems = this.beforeSearchTodoItems;
-    this.filterList();
-    this.filterDone();
-  }
-
-  filterDone(): void {
-    if (this.isDone) {
-      this.todoListService.someEvent.next(this.todoListService.filterDone(this.isDone, this.todoItems));
-    } else {
-      this.todoItems = this.beforeSearchTodoItems;
-    }
-    this.filterList();
-  }
+  // addItem(): void {
+  //   this.todoItems.push({
+  //     id: +new Date() + 1,
+  //     value: `task#new`,
+  //     isDone: false
+  //   });
+  // }
 }

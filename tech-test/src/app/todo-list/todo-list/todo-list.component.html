@@ -13,7 +13,7 @@
         <input matInput
                type="text"
                [(ngModel)]="searchValue"
-               (input)="filterList()"
+               (input)="search()"
                placeholder="For ex., task#1">
         <button matSuffix
                 mat-icon-button
@@ -24,7 +24,7 @@
         </button>
       </mat-form-field>
       <mat-checkbox [(ngModel)]="isDone"
-                    (change)="filterDone()">Hide complete items</mat-checkbox>
+                    (change)="toggleListDone()">Hide complete items</mat-checkbox>
     </mat-card-actions>
     <mat-card-content>
       <ul *ngIf="todoItems.length"
@@ -32,7 +32,7 @@
         <li *ngFor="let todoItem of todoItems">
           <div *ngIf="editMode !== todoItem.id"
                class="grid">
-            <mat-checkbox (change)="toggleDone(todoItem)"
+            <mat-checkbox (change)="toggleItemDone(todoItem)"
                           [checked]="todoItem.isDone"
                           [ngClass]="{'done': todoItem.isDone}"
                           class="l-h-70">{{todoItem.value}}</mat-checkbox>
@@ -40,7 +40,7 @@
               <button mat-stroked-button
                       color="primary"
                       [disabled]="todoItem.isDone"
-                      (click)="editItem($event, todoItem)">edit</button>
+                      (click)="editItem(todoItem)">edit</button>
               <button mat-stroked-button
                       color="warn"
                       [disabled]="todoItem.isDone"
