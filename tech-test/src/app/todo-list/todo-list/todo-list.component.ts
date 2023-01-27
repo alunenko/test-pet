@@ -24,21 +24,33 @@ export class TodoListComponent implements OnInit {
   ngOnInit(): void {
     this.todoListService.todoItems$.subscribe((todoItems: ITodoItem[]) => {
       this.todoItems = todoItems;
-      console.log('this.todoItems ', this.todoItems);
     });
 
     this.searchValuePrev = this.searchValue;
   }
 
-  toggleListDone(): void { // TODO: done!
-    if(this.isDone) {
-      this.beforeSearchTodoItems = this.todoListService.todoItems$.value
+  toggleListDone(): void {
+    if (this.isDone) {
+      if (!!this.searchValue) {
+        // case: isDone -> true and searchValue true (filled)
+        this.todoListService.toggleListDone({isDone: this.isDone, prevList: this.todoListService.todoItems$.value});
+      } else {
+        // case: isDone -> true and searchValue false (not_filled)
+        this.beforeSearchTodoItems = this.todoListService.todoItems$.value;
+        this.todoListService.toggleListDone({isDone: this.isDone, prevList: this.beforeSearchTodoItems});
+      }
+    } else {
+      if (!!this.searchValue) {
+        // case: isDone -> false and searchValue true (filled)
+        this.todoListService.search({search: this.searchValue, prevList: this.beforeSearchTodoItems});
+      } else {
+        // case: isDone -> false and searchValue false (not_filled)
+        this.todoListService.toggleListDone({isDone: this.isDone, prevList: this.beforeSearchTodoItems});
+      }
     }
-
-    this.todoListService.toggleListDone({isDone: this.isDone, prevList: this.beforeSearchTodoItems});
   }
 
-  search(): void { // TODO: done!
+  search(): void {
     // case: from '' to 1
     if (
       (this.searchValuePrev === '' || this.searchValuePrev === undefined) &&
@@ -68,7 +80,7 @@ export class TodoListComponent implements OnInit {
     }
   }
 
-  cancelSearch(): void { // TODO: done!
+  cancelSearch(): void {
     this.searchValue = '';
     this.todoListService.todoItems$.next(this.beforeSearchTodoItems);
   }
@@ -78,7 +90,7 @@ export class TodoListComponent implements OnInit {
     this.todoListService.todoItems$.value[itemIndex].isDone = !this.todoListService.todoItems$.value[itemIndex].isDone;
   }
 
-  editItem(item: ITodoItem): void { // TODO: done!
+  editItem(item: ITodoItem): void {
     // Close previous edit if it was active
     if (this.editedItem && this.editMode !== -1) {
       this.cancelEdit(this.editedItem);
@@ -90,14 +102,18 @@ export class TodoListComponent implements OnInit {
     this.editedItem = item;
   }
 
-  cancelEdit(item: ITodoItem): void { // TODO: done!
+  cancelEdit(item: ITodoItem): void {
     const itemIndex = this.todoListService.findItem(item);
     this.todoListService.todoItems$.value[itemIndex].value = this.valueBeforeEdit;
 
-    this.editMode = -1;
+    this.closeEdit();
   }
 
-  saveItem(): void { // TODO: done!
+  saveItem(): void {
+    this.closeEdit();
+  }
+
+  closeEdit(): void {
     this.editMode = -1;
   }
 
